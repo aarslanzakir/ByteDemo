@@ -48,3 +48,15 @@ Thumbs.db
 *.mov
 *.wmv
 
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Secrets (set these in Vercel → Settings → Environment Variables)
+.env
+.env*.local
+
+# Vercel
+.vercel
