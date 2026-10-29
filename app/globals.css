@@ -210,15 +210,15 @@ a {
   color: var(--accent);
 }
 
-.cal {
+/* Byte widgets (booking calendar, ...); the height is set from inside (EmbedFrame). */
+.byte-embed {
   display: block;
   width: 100%;
-  max-width: 900px;
+  max-width: 1080px;
   height: 640px;
   margin: 0 auto;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: #fff;
+  border: 0;
+  color-scheme: normal;
 }
 
 .footer {

@@ -1,6 +1,8 @@
 // Renders the section types Byte's editor offers: hero, services, about,
-// testimonials, contact and booking. Unknown types are skipped, so adding a
-// type in Byte never breaks an older site.
+// testimonials and contact. Widgets (booking calendar, and any added later)
+// arrive with an `embed` and are shown in a frame, so they need no code here.
+// Unknown types are skipped, so adding a type in Byte never breaks an older site.
+import EmbedFrame from './EmbedFrame'
 import ContactForm from './ContactForm'
 
 const Hero = ({ s }) => (
@@ -66,19 +68,28 @@ const Contact = ({ s, leadCapture }) =>
     </section>
   )
 
+// Sites set up before Byte had its own calendar used a Cal.com link.
 const Booking = ({ s, leadCapture }) =>
   leadCapture.booking && leadCapture.calLink ? (
-    <section className='block tinted' id='book'>
-      <h2>{s.heading}</h2>
-      <p className='muted center'>{s.text}</p>
-      <iframe className='cal' src={`${leadCapture.calLink}?embed=true`} title='Book a time' loading='lazy' />
-    </section>
+    <Embed s={s} embed={{ url: `${leadCapture.calLink}?embed=true`, title: s.heading }} />
   ) : null
+
+// Any Byte widget: the CMS sends it ready to embed, so new widgets need no code here.
+const Embed = ({ s, embed }) => (
+  <section className='block tinted' id={s.type === 'booking' ? 'book' : undefined}>
+    {s.heading && <h2>{s.heading}</h2>}
+    {s.text && <p className='muted center'>{s.text}</p>}
+    <EmbedFrame src={embed.url} title={embed.title || s.heading || 'Byte widget'} minHeight={embed.min_height} />
+  </section>
+)
 
 const RENDERERS = { hero: Hero, services: Services, about: About, testimonials: Testimonials, contact: Contact, booking: Booking }
 
 export default function Sections({ sections = [], leadCapture }) {
   return sections.map(s => {
+    // A section that comes with an embed is shown as one, whatever its type.
+    if (s.embed?.url) return <Embed key={s.id} s={s} embed={s.embed} />
+
     const Renderer = RENDERERS[s.type]
 
     return Renderer ? <Renderer key={s.id} s={s} leadCapture={leadCapture} /> : null
